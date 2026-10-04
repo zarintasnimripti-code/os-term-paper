@@ -1,0 +1,11 @@
+policy,phase,hit_mean,hit_std,faults_mean
+FIFO,after_shift,0.3916,0.0088,6083.5
+FIFO,before_shift,0.1498,0.004,8502.4
+LRU,after_shift,0.3941,0.0087,6058.7
+LRU,before_shift,0.1884,0.0054,8115.8
+Learned-adaptive,after_shift,0.3741,0.0109,6259.1
+Learned-adaptive,before_shift,0.6537,0.002,3463.5
+Learned-static,after_shift,0.2014,0.0492,7985.8
+Learned-static,before_shift,0.6547,0.001,3453.0
+OPT,after_shift,0.5446,0.0065,4553.6
+OPT,before_shift,0.6993,0.0013,3006.9

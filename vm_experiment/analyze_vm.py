@@ -1,0 +1,18 @@
+import pandas as pd, matplotlib; matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+d = pd.read_csv("results/vm_raw.csv")
+g = d.groupby(["ram_gb","vcpu"]).agg(['mean','std']).round(2)
+g.to_csv("results/vm_summary.csv")
+s = d.groupby(["ram_gb","vcpu"]).mean(numeric_only=True).reset_index()
+e = d.groupby(["ram_gb","vcpu"]).std(numeric_only=True).reset_index()
+def bar(col, yl, fn, log=False):
+    p = s.pivot(index="ram_gb", columns="vcpu", values=col)
+    pe = e.pivot(index="ram_gb", columns="vcpu", values=col)
+    ax = p.plot.bar(yerr=pe, capsize=3, figsize=(6,4), logy=log)
+    ax.set_xlabel("VM RAM (GB)"); ax.set_ylabel(yl); ax.legend(title="vCPUs"); plt.title(yl+" vs RAM"); plt.tight_layout()
+    plt.savefig(f"results/{fn}.png", dpi=200); plt.close()
+bar("wall_s","Runtime (s)","vm_runtime")
+bar("majflt","Major page faults","vm_majflt", True)
+bar("pswpout","Pages swapped out","vm_swapout", True)
+bar("cpu_pct","CPU utilisation (%)","vm_cpu")
+print(g)
