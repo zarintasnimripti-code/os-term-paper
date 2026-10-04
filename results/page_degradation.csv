@@ -2,5 +2,5 @@ policy,after_shift,before_shift,degradation
 FIFO,0.3916,0.1498,-0.2418
 LRU,0.3941,0.1884,-0.2057
 Learned-adaptive,0.3741,0.6537,0.2796
-Learned-static,0.2014,0.6547,0.4533
+Learned-static,0.2006,0.6547,0.4541
 OPT,0.5446,0.6993,0.1547
