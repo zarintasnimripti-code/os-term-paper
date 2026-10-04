@@ -1,0 +1,3 @@
+1 GB RAM / 2 vCPU: workload (1536 MB working set) was terminated by the OS
+("application stopped, device memory is nearly full") in 3 of 3 attempts.
+Observed free -m at the time: 907 MB total, ~135 MB available.

@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""Fixed memory+CPU workload. SAME work in every experiment (only VM resources change).
-W worker processes, each owns (TOTAL_MB/W) MB, does sequential then random page touches + small compute."""
-import os, sys, time, random, resource, multiprocessing as mp
+import os, time, random, resource, multiprocessing as mp
 
-TOTAL_MB = int(os.environ.get("TOTAL_MB", 1536))   # total working set (fixed)
-WORKERS  = int(os.environ.get("WORKERS", 4))       # fixed
-RANDOM_TOUCHES = int(os.environ.get("TOUCHES", 400000))  # per worker (fixed)
+TOTAL_MB = int(os.environ.get("TOTAL_MB", 1536))
+WORKERS  = int(os.environ.get("WORKERS", 4))
+RANDOM_TOUCHES = int(os.environ.get("TOUCHES", 10000))
 PAGE = 4096
 
 def worker(_):
@@ -13,14 +11,14 @@ def worker(_):
     n = TOTAL_MB // WORKERS * 1024 * 1024
     buf = bytearray(n)
     pages = n // PAGE
-    for p in range(pages):                 # sequential pass (locality)
+    for p in range(pages):
         buf[p * PAGE] = 1
     acc = 0
-    for _i in range(RANDOM_TOUCHES):       # random pass (stress)
+    for _i in range(RANDOM_TOUCHES):
         p = random.randrange(pages)
         buf[p * PAGE] = (buf[p * PAGE] + 1) & 255
-        acc += (p * 31) % 7                # tiny compute
-    for p in range(pages):                 # final sequential pass
+        acc += (p * 31) % 7
+    for p in range(pages):
         acc += buf[p * PAGE]
     return acc
 
@@ -33,8 +31,9 @@ def vmstat():
 
 if __name__ == "__main__":
     v0 = vmstat(); t0 = time.time()
-    with mp.Pool(WORKERS) as pool:
-        pool.map(worker, range(WORKERS))
+    pool = mp.get_context("fork").Pool(WORKERS)
+    pool.map(worker, range(WORKERS))
+    pool.close(); pool.join()
     wall = time.time() - t0; v1 = vmstat()
     r = resource.getrusage(resource.RUSAGE_CHILDREN)
     out = dict(wall_s=round(wall, 3), user_s=round(r.ru_utime, 3), sys_s=round(r.ru_stime, 3),
