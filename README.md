@@ -18,7 +18,10 @@ Two parts, one theme (page replacement / memory pressure):
 Outputs: `results/*.csv`, `results/*.png`.
 
 ## Summary of results
-(paste 3-4 lines from results/page_degradation.csv and vm_summary.csv)
+
+- VM experiment: with 4 GB vRAM the 1.5 GB workload finishes in 2-4 s with no swapping; with 2 GB it takes 64-101 s (16-44x slower) with 172k-239k major faults. At 1 GB the OS terminated the workload.
+- Page replacement: a learned eviction model trained only before the workload shift degraded most (hit ratio 0.655 -> 0.201); retraining every 500 references recovered part of the loss (0.374). Optimal is the upper bound (0.699 -> 0.545).
+- Full details: report/report.pdf, tables in results/vm_summary.csv and results/page_degradation.csv.
 
 ## AI assistance disclosure
 Code scaffolding and report template were generated with Claude (Anthropic); I ran all experiments, verified outputs, and wrote the analysis.
